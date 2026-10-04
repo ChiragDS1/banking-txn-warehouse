@@ -1,0 +1,39 @@
+name: ci
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: bank
+          POSTGRES_PASSWORD: bank
+          POSTGRES_DB: warehouse
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U bank -d warehouse"
+          --health-interval 3s --health-retries 20
+    env:
+      DATABASE_URL: postgresql://bank:bank@localhost:5432/warehouse
+      PGPASSWORD: bank
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: pip install -e ".[dev]"
+      - run: ruff check src tests
+      - run: pytest -q tests/test_generate.py
+
+      # Week 1 Day 5 (Lesson 0005): add the integration steps below so CI builds
+      # the warehouse from scratch on every push and runs test_quality.py against it.
+      # Hints: generate a small dataset (--customers 500 --txns 20000), load the
+      # source with psql \copy (the runner's files aren't inside the service
+      # container, so server-side COPY won't see them), run your load twice,
+      # then run the day-2 snapshot and pytest.
