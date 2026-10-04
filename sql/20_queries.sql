@@ -1,0 +1,10 @@
+-- Lesson 0001 patterns, ported to the real warehouse once dw.* exists (Day 2+).
+-- Run each with EXPLAIN (ANALYZE, BUFFERS), note the time, add one index, rerun,
+-- and record before/after in the README "Results" table.
+--
+-- 1. Latest transaction per customer
+-- 2. Top 2 merchant categories per customer, ties kept
+-- 3. Running balance per account (ROWS frame, tiebreaker)
+-- 4. Velocity: charges < 60s after the previous one on the same account
+-- 5. Outliers vs the account's trailing 30-transaction average (excluding current row)
+-- 6. Longest daily activity streak per customer
